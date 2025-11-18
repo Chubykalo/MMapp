@@ -1,6 +1,7 @@
 from PyPDF2 import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 import os
+import shutil
 
 TEMPLATE_PATH = "pdf/scorecard_template.pdf"  # relative to your project folder
 
@@ -80,3 +81,10 @@ def apply_overlay(template_path=TEMPLATE_PATH, overlay_path="overlay.pdf", outpu
         writer.write(f)
     
     print(f"PDF saved as {output_path}")
+
+def cleanup(tmp_dir: str = "tmp_overlays"):
+    """
+    Deletes the entire tmp_dir folder and all its contents.
+    """
+    shutil.rmtree(tmp_dir)
+    print("temp_overlays cleaned")

@@ -39,6 +39,7 @@ def main():
                      font_athlete=FONT_ATHLETE, size_athlete=FONT_SIZE_ATHLETE)
 
         apply_overlay(TEMPLATE_PATH, overlay_path=overlay, output_path=out)
+    cleanup(TMP_DIR)
 
 if __name__ == "__main__":
     main()
