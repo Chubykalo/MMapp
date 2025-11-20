@@ -11,7 +11,7 @@ from functions import *
 # Configuration (edit here)
 # -----------------------
 
-TEMPLATE_PATH = "pdf/scorecard_template.pdf"
+TEMPLATE_PATH = "assets/scorecard_template.pdf"
 FONT_MATCH = "Helvetica-Bold"
 FONT_ATHLETE = "Helvetica"
 FONT_SIZE_MATCH = 14

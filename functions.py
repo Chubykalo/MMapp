@@ -3,7 +3,7 @@ from reportlab.pdfgen import canvas
 import os
 import shutil
 
-TEMPLATE_PATH = "pdf/scorecard_template.pdf"  # relative to your project folder
+TEMPLATE_PATH = "assets/scorecard_template.pdf"  # relative to your project folder
 
 def read_template(template_path=TEMPLATE_PATH):
     """Open the PDF template and return the reader object and page size in points."""
