@@ -5,6 +5,7 @@ import shutil
 import csv
 from typing import List, Tuple, Union
 import glob
+from pathlib import Path
 
 TEMPLATE_PATH = "assets/scorecard_template.pdf"  # relative to your project folder
 
@@ -179,3 +180,5 @@ def merge_pdfs_in_folder(input_glob_pattern: str, output_path: str, keep_inputs:
 
 
     return output_path
+
+
