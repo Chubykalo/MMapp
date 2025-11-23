@@ -20,6 +20,7 @@ FONT_SIZE_MATCH = 14
 FONT_SIZE_ATHLETE = 8.5
 OUT_DIR = "output"
 TMP_DIR = "tmp_overlays"
+MERGED_OUTPUT_FILENAME = "scorecards_all.pdf"
 
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(TMP_DIR, exist_ok=True)
@@ -33,7 +34,7 @@ def main():
     for i, (match, blue, red) in enumerate(matches, start=1):
         texts = [match, blue, red]
         overlay = os.path.join(TMP_DIR, f"overlay_{i}.pdf")
-        out = os.path.join(OUT_DIR, f"scorecard_{i}.pdf")
+        out = os.path.join(OUT_DIR, f"scorecard_{i:02d}.pdf")
 
         make_overlay(page_width, page_height, overlay, texts,
                      font_match=FONT_MATCH, size_match=FONT_SIZE_MATCH,
@@ -42,6 +43,14 @@ def main():
         apply_overlay(TEMPLATE_PATH, overlay_path=overlay, output_path=out)
     
     cleanup(TMP_DIR)
+
+    # Merge all scorecards into one file
+    merged_output_path = os.path.join(OUT_DIR, MERGED_OUTPUT_FILENAME)
+    pattern = os.path.join(OUT_DIR, "scorecard_*.pdf")
+
+    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=True)
+
+    print(f"Merged scorecards written to: {merged_output_path}")
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,10 @@
-from PyPDF2 import PdfReader, PdfWriter
+from PyPDF2 import PdfReader, PdfWriter, PdfMerger
 from reportlab.pdfgen import canvas
 import os
 import shutil
 import csv
 from typing import List, Tuple, Union
+import glob
 
 TEMPLATE_PATH = "assets/scorecard_template.pdf"  # relative to your project folder
 
@@ -91,15 +92,6 @@ def cleanup(tmp_dir: str = "tmp_overlays"):
     shutil.rmtree(tmp_dir)
     print("temp_overlays cleaned")
 
-import csv
-from typing import List, Tuple, Union
-
-import csv
-from typing import List, Tuple, Union
-
-import csv
-from typing import List, Tuple, Union
-
 def load_matches_from_csv(
     path: str,
     delimiter: str = ",",
@@ -148,4 +140,36 @@ def load_matches_from_csv(
 
     return matches
 
+def merge_pdfs_in_folder(input_glob_pattern: str, output_path: str, keep_inputs: bool = True):
+    """
+    Merge all PDFs matching `input_glob_pattern` into a single PDF at `output_path`.
+    - input_glob_pattern: e.g. "output/scorecard_*.pdf"
+    - output_path: e.g. "output/scorecards_all.pdf"
+    - keep_inputs: if False, deletes input PDFs after successful merge.
+    Files are merged in lexicographic order of filename.
+    """
+    pdf_paths = sorted(glob.glob(input_glob_pattern))
+    if not pdf_paths:
+        raise FileNotFoundError(f"No PDFs found matching: {input_glob_pattern}")
 
+    merger = PdfMerger()
+    try:
+        for p in pdf_paths:
+            # Append each file. PdfMerger will open and close them itself.
+            merger.append(p)
+        # Write merged PDF
+        with open(output_path, "wb") as file_output:
+            merger.write(file_output)
+    finally:
+        merger.close()
+
+    # Optionally remove input files after successful write
+    if not keep_inputs:
+        for p in pdf_paths:
+            try:
+                os.remove(p)
+            except Exception as e:
+                # Non-fatal: warn but don't raise -> avoid losing merged file because delete failed
+                print(f"Warning: failed to delete {p}: {e}")
+
+    return output_path
