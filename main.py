@@ -20,7 +20,9 @@ FONT_SIZE_MATCH = 14
 FONT_SIZE_ATHLETE = 8.5
 OUT_DIR = "output"
 TMP_DIR = "tmp_overlays"
-MERGED_OUTPUT_FILENAME = "scorecards_all.pdf"
+MERGED_OUTPUT_FILENAME = "OSF7_scorecards.pdf"
+KEEP_SINGLE_SCORECARDS = False
+
 
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(TMP_DIR, exist_ok=True)
@@ -48,7 +50,7 @@ def main():
     merged_output_path = os.path.join(OUT_DIR, MERGED_OUTPUT_FILENAME)
     pattern = os.path.join(OUT_DIR, "scorecard_*.pdf")
 
-    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=True)
+    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=KEEP_SINGLE_SCORECARDS)
 
     print(f"Merged scorecards written to: {merged_output_path}")
 

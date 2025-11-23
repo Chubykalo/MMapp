@@ -165,11 +165,17 @@ def merge_pdfs_in_folder(input_glob_pattern: str, output_path: str, keep_inputs:
 
     # Optionally remove input files after successful write
     if not keep_inputs:
+        all_deleted = True  # assume success unless proven otherwise
+
         for p in pdf_paths:
             try:
                 os.remove(p)
             except Exception as e:
-                # Non-fatal: warn but don't raise -> avoid losing merged file because delete failed
+                all_deleted = False       # mark failure
                 print(f"Warning: failed to delete {p}: {e}")
+
+        if all_deleted:
+            print("Single scorecards deleted")
+
 
     return output_path
