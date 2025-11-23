@@ -12,6 +12,8 @@ from functions import *
 # -----------------------
 
 TEMPLATE_PATH = "assets/scorecard_template.pdf"
+FIGHTCARD_CSV_PATH = "assets/test_fightcard2.csv"
+
 FONT_MATCH = "Helvetica-Bold"
 FONT_ATHLETE = "Helvetica"
 FONT_SIZE_MATCH = 14
@@ -22,13 +24,12 @@ TMP_DIR = "tmp_overlays"
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(TMP_DIR, exist_ok=True)
 
-matches = [
-    ("1", "Juan Pizarro", "Daniel García"),
-    ("2", "Juan Carlos Serrano", "Gonzalo Lázaro"),
-]
+# Load matches directly from CSV
+matches = load_matches_from_csv(path=FIGHTCARD_CSV_PATH, delimiter=",", has_header=True)
 
 def main():
     template_reader, page_width, page_height = read_template(TEMPLATE_PATH)
+
     for i, (match, blue, red) in enumerate(matches, start=1):
         texts = [match, blue, red]
         overlay = os.path.join(TMP_DIR, f"overlay_{i}.pdf")
@@ -39,6 +40,7 @@ def main():
                      font_athlete=FONT_ATHLETE, size_athlete=FONT_SIZE_ATHLETE)
 
         apply_overlay(TEMPLATE_PATH, overlay_path=overlay, output_path=out)
+    
     cleanup(TMP_DIR)
 
 if __name__ == "__main__":
