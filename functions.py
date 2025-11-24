@@ -104,7 +104,6 @@ def load_matches_from_csv(
         match_number, blue_athlete, red_athlete
 
     Returns a list of tuples: (match_number, blue, red)
-    - match_number is an int when possible, otherwise a string or ""
     - blue and red athletes may be empty
     - blank CSV rows become ("", "", "")
     - extra CSV columns are ignored

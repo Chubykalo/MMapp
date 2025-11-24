@@ -1,7 +1,6 @@
 # main.py
 """
 Main program for generating scorecards.
-Keeps configuration and program logic separate from functions.py helpers.
 """
 
 import os
