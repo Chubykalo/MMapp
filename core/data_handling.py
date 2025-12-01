@@ -1,9 +1,9 @@
 from PyPDF2 import PdfReader, PdfWriter, PdfMerger
-from reportlab.pdfgen import canvas
 import csv
+from typing import List, Tuple, Union
 
 
-def read_template(template_path=TEMPLATE_PATH):
+def read_template(template_path):
     """Open the PDF template and return the reader object and page size in points."""
     if not os.path.exists(template_path):
         raise FileNotFoundError(f"Template not found: {template_path}")

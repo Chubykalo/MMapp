@@ -5,6 +5,6 @@
   "FONT_ATHLETE": "Helvetica",
   "FONT_SIZE_MATCH": 14,
   "FONT_SIZE_ATHLETE": 8.5,
-  "MERGED_OUTPUT_FILENAME": "All_scorecards.pdf",
+  "MERGED_OUTPUT_FILENAME": "all_scorecards.pdf",
   "KEEP_SINGLE_SCORECARDS": false
 }

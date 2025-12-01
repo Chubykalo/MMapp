@@ -2,22 +2,10 @@ from PyPDF2 import PdfReader, PdfWriter, PdfMerger
 from reportlab.pdfgen import canvas
 import os
 import shutil
-import csv
-from typing import List, Tuple, Union
 import glob
 from pathlib import Path
 
 
-def read_template(template_path):
-    """Open the PDF template and return the reader object and page size in points."""
-    if not os.path.exists(template_path):
-        raise FileNotFoundError(f"Template not found: {template_path}")
-    
-    reader = PdfReader(template_path)
-    page = reader.pages[0]
-    width = float(page.mediabox.width)
-    height = float(page.mediabox.height)
-    return reader, width, height
 
 def make_overlay(page_width_pt, page_height_pt, overlay_path, texts,
                  font_match, size_match, font_athlete, size_athlete):
@@ -60,6 +48,7 @@ def make_overlay(page_width_pt, page_height_pt, overlay_path, texts,
         c.drawString(x, y, txt)
     c.save()
 
+
 def apply_overlay(template_path, overlay_path="overlay.pdf", output_path="scorecard_filled.pdf"):
     """
     Merge the overlay PDF onto the template PDF and save the result.
@@ -85,6 +74,7 @@ def apply_overlay(template_path, overlay_path="overlay.pdf", output_path="scorec
     
     print(f"PDF saved as {output_path}")
 
+
 def cleanup(tmp_dir: str = "tmp_overlays"):
     """
     Deletes the entire tmp_dir folder and all its contents.
@@ -92,52 +82,6 @@ def cleanup(tmp_dir: str = "tmp_overlays"):
     shutil.rmtree(tmp_dir)
     print("temp_overlays cleaned")
 
-def load_matches_from_csv(
-    path: str,
-    delimiter: str = ",",
-    has_header: bool = True,
-    encoding: str = "utf-8",
-) -> List[Tuple[Union[int, str], str, str]]:
-    """
-    Load matches from a CSV file in the format:
-        match_number, blue_athlete, red_athlete
-
-    Returns a list of tuples: (match_number, blue, red)
-    - blue and red athletes may be empty
-    - blank CSV rows become ("", "", "")
-    - extra CSV columns are ignored
-    - order is preserved exactly as in the CSV
-    """
-
-    matches: List[Tuple[Union[int, str], str, str]] = []
-
-    # Open the CSV file
-    with open(path, newline="", encoding=encoding) as input_file:
-        reader = csv.reader(input_file, delimiter=delimiter)
-
-        # Skip header row if CSV has one
-        if has_header:
-            try:
-                next(reader)
-            except StopIteration:
-                print("Warning: CSV appears empty.")
-                return []
-
-        # Process each remaining row
-        for row in reader:
-
-            # Guarantee three values (pad if needed)
-            match_number_raw, blue_raw, red_raw = (row + ["", "", ""])[:3]
-
-            # Always strip whitespace
-            match_number = match_number_raw.strip()
-            blue = blue_raw.strip()
-            red = red_raw.strip()
-
-            # Add the processed tuple (even if fields are empty)
-            matches.append((match_number, blue, red))
-
-    return matches
 
 def merge_pdfs_in_folder(input_glob_pattern: str, output_path: str, keep_inputs: bool = True):
     """
@@ -178,5 +122,3 @@ def merge_pdfs_in_folder(input_glob_pattern: str, output_path: str, keep_inputs:
 
 
     return output_path
-
-
