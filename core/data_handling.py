@@ -1,6 +1,7 @@
-from PyPDF2 import PdfReader, PdfWriter, PdfMerger
+from PyPDF2 import PdfReader
 import csv
 from typing import List, Tuple, Union
+import os
 
 
 def read_template(template_path):
