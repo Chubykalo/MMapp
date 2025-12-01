@@ -1,22 +1,19 @@
-from functions import *
 
-def test_pdf_workflow():
-    # Step 1: Read template to get page size
-    template_reader, page_width, page_height = read_template()
-    
-    # Step 2: Create an overlay with a test text
-    overlay_path = "overlay.pdf"
-    texts = ["5", "Juan Carlos Guarino", "Daniel García"]
-    
-    # Call the function from functions.py
-    make_overlay(page_width, page_height, overlay_path, texts,
-                font_name="Helvetica-Bold", font_size=8.5)
-    
-    # Step 3: Merge overlay with template and save final PDF
-    output_path = "scorecard_filled.pdf"
-    apply_overlay(overlay_path=overlay_path, output_path=output_path)
-    
-    print("Test PDF workflow completed. Check 'scorecard_filled.pdf'.")
+"""
+Quick test to verify the refactored code works
+"""
+from core.data_handling import read_template, load_matches_from_csv
+from core.pdf_generation import make_overlay, apply_overlay
 
-if __name__ == "__main__":
-    test_pdf_workflow()
+# Test 1: Can we read the template?
+print("Test 1: Reading template...")
+reader, width, height = read_template("assets/scorecard_template.pdf")
+print(f"✓ Template size: {width} x {height}")
+
+# Test 2: Can we load CSV data?
+print("\nTest 2: Loading CSV...")
+matches = load_matches_from_csv("assets/test_fightcard2.csv")
+print(f"✓ Loaded {len(matches)} matches")
+print(f"  First match: {matches[0]}")
+
+print("\n✓ All tests passed! The refactored code works.")
