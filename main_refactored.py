@@ -1,7 +1,3 @@
-# main_refactored.py
-"""
-Main program using refactored core modules.
-"""
 import os
 import json
 from core.data_handling import load_matches_from_csv, read_template
@@ -24,9 +20,6 @@ def main():
     # Ensure dirs exist
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(TMP_DIR, exist_ok=True)
-    
-    # TODO: Complete this using your refactored functions
-    # Look at your original main.py and adapt it to use the new imports
 
     # Load matches directly from CSV
     matches = load_matches_from_csv(path=cfg["FIGHTCARD_CSV_PATH"], delimiter=",", has_header=True)
@@ -45,6 +38,14 @@ def main():
         apply_overlay(cfg["TEMPLATE_PATH"], overlay_path=overlay, output_path=out)
     
     cleanup(TMP_DIR)
+
+    # Merge all scorecards into one file
+    merged_output_path = os.path.join(OUT_DIR, cfg["MERGED_OUTPUT_FILENAME"])
+    pattern = os.path.join(OUT_DIR, "scorecard_*.pdf")
+
+    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=cfg["KEEP_SINGLE_SCORECARDS"])
+
+    print(f"Merged scorecards written to: {merged_output_path}")
     
     pass
 
