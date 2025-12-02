@@ -42,6 +42,37 @@ class ScorecardGUI:
         self.fightcard_entry.grid(row=1, column=1, sticky='we', padx=5)
         tk.Button(top_frame, text='Browse', command=self.browse_fightcard).grid(row=1,column=2, padx=5)
 
+        # Add Match field
+        tk.Label(top_frame, text='Add New Match', bg='lightgray').grid(row=2, column=0, sticky='w', padx=5)
+        
+        self.add_match_entry = tk.Entry(top_frame, width=10)
+        self.add_match_entry.grid(row=2, column=1, sticky='w', padx=5)
+        self.add_match_entry.insert(0, 'Match #')
+        self.add_match_entry.config(fg='gray')
+
+        self.add_blue_entry = tk.Entry(top_frame, width=15)    
+        self.add_blue_entry.grid(row=2, column=1, sticky='w', padx=(80,5))
+        self.add_blue_entry.insert(0, 'Blue Athlete')
+        self.add_blue_entry.config(fg='gray')
+
+        self.add_red_entry = tk.Entry(top_frame, width=15)
+        self.add_red_entry.grid(row=2, column=1, sticky='w', padx=(220,5))
+        self.add_red_entry.insert(0, 'Red Athlete')
+        self.add_red_entry.config(fg='gray')
+
+        tk.Button(top_frame, text='ADD', command=self.add_match).grid(row=2, column=2, padx=5)
+
+        # Store placeholder text for each entry
+        self.placeholders = {
+            self.add_match_entry: 'Match #',
+            self.add_blue_entry: 'Blue Athlete',
+            self.add_red_entry: 'Red Athlete'
+        }
+
+        # Bind focus events to all three entries
+        for entry in self.placeholders.keys():
+            entry.bind('<FocusIn>', self.entry_focus_in)
+            entry.bind('<FocusOut>', self.entry_focus_out)
 
         ##### Middle frame section #####
 
@@ -76,7 +107,6 @@ class ScorecardGUI:
         button_frame = tk.Frame(middle_frame)
         button_frame.pack(fill='x', pady=5)
 
-        tk.Button(button_frame, text='Add Match', command=self.add_match).pack(side='left', padx=5)
         tk.Button(button_frame, text='Remove Selected Match', command=self.remove_match).pack(side='left', padx=5)
 
 
@@ -115,6 +145,7 @@ class ScorecardGUI:
 
     
     def remove_match(self):
+        """Remove selected match from list."""
         selected = self.match_table.selection()
 
         if not selected:
@@ -128,13 +159,30 @@ class ScorecardGUI:
            self.match_table.delete(selected[0]) # delete row from preview table
 
 
+    def entry_focus_in(self, event):
+        """Remove placeholder text when user clicks in the field."""
+        widget = event.widget
+        current_text = widget.get()
+        placeholder = self.placeholders[widget]
 
-        # Ask for confirmation (tkinter askokcancel)
-        # If confirmed:
-            # Get the index of the selected row
-            # Delete from table using self.match_table.delete(selected[index])
-            # Delete from self.matches using: del self.matches[index]
+        # Check if the text is gray (placeholder)
+        # If yes, clear it and change color to black
+        if current_text == placeholder:
+            widget.delete(0, tk.END)
+            widget.config(fg='black')
 
+    
+    def entry_focus_out(self, event):
+        """Restore placeholder text if unfocused and the field is empty."""
+        widget = event.widget
+        current_text = widget.get()
+        placeholder = self.placeholders[widget]
+
+        # Check if the field is empty
+        # if yes, restore the placeholder and make it gray
+        if current_text == '':
+            widget.insert(0, placeholder)
+            widget.config(fg='gray')
 
 
     def run(self):
