@@ -22,7 +22,9 @@ class ScorecardGUI:
 
     def create_widgets(self):
         
+
         ##### Top frame section #####
+
 
         # Create a frame for the top section
         top_frame = tk.Frame(self.root, bg='lightgray', padx=10, pady=10)
@@ -40,14 +42,9 @@ class ScorecardGUI:
         self.fightcard_entry.grid(row=1, column=1, sticky='we', padx=5)
         tk.Button(top_frame, text='Browse', command=self.browse_fightcard).grid(row=1,column=2, padx=5)
 
-        # # Set output directory
-        # tk.Label(top_frame, text='Output Directory', bg='lightgray').grid(row=2, column=0, sticky='w', padx=5)
-        # self.output_dir_entry = tk.Entry(top_frame)
-        # self.output_dir_entry.insert(0, self.output_dir) # Set the default directory as a pre-selected text
-        # self.output_dir_entry.grid(row=2, column=1, sticky='we', padx=5)
-        # tk.Button(top_frame, text='Browse', command=self.browse_output_dir).grid(row=2,column=2, padx=5)
 
         ##### Middle frame section #####
+
 
         # Create a frame for the middle section
         middle_frame = tk.Frame(self.root, padx=10, pady=10)
@@ -70,6 +67,17 @@ class ScorecardGUI:
         self.match_table.column('red', width=200)
 
         self.match_table.pack(fill='both', expand=True)
+
+
+        ##### Button frame section #####
+
+
+        # Button frame below table
+        button_frame = tk.Frame(middle_frame)
+        button_frame.pack(fill='x', pady=5)
+
+        tk.Button(button_frame, text='Add Match', command=self.add_match).pack(side='left', padx=5)
+        tk.Button(button_frame, text='Remove Selected Match', command=self.remove_match).pack(side='left', padx=5)
 
 
     def browse_fightcard(self):
@@ -101,15 +109,32 @@ class ScorecardGUI:
         for match_num, blue, red in self.matches:
             self.match_table.insert('', 'end', values=(match_num, blue, red))
 
-    # def browse_output_dir(self):
-    #     directory = filedialog.askdirectory(
-    #         title = "Select Output directory"
-    #     )
 
-    #     if directory:
-    #         self.output_dir = directory
-    #         self.output_dir_entry.delete(0, tk.END) # Clear the entry first
-    #         self.output_dir_entry.insert(0, directory) # Show the path
+    def add_match(self):
+        pass
+
+    
+    def remove_match(self):
+        selected = self.match_table.selection()
+
+        if not selected:
+            return
+
+        row_index = self.match_table.index(selected[0]) 
+        answer = messagebox.askyesno(title='confirmation', message='Are you sure you want to remove?')
+        
+        if answer:
+           del self.matches[row_index] # delete row from matches list
+           self.match_table.delete(selected[0]) # delete row from preview table
+
+
+
+        # Ask for confirmation (tkinter askokcancel)
+        # If confirmed:
+            # Get the index of the selected row
+            # Delete from table using self.match_table.delete(selected[index])
+            # Delete from self.matches using: del self.matches[index]
+
 
 
     def run(self):
