@@ -198,11 +198,27 @@ class ScorecardGUI:
     def edit_match(self):
         """Edit selected match from list."""
         # Check if a row is selected
-        # Get the current values from that row
-        # Show a dialog with those values pre-filled
-        # If user clicks OK, update both the table and self.matches
-        # if user clicks Cancel, do nothing
-        pass
+        selected = self.match_table.selection()
+
+        if not selected:
+            return
+
+        # Get the indexes
+        item_data = self.match_table.item(selected[0])
+        row_index = self.match_table.index(selected[0])
+
+        # Get the current values from that row  
+        current_match, current_blue, current_red = item_data['values']
+ 
+        # Show dialog with current values pre-filled
+        dialog = EditMatchDialog(self.root, current_match, current_blue, current_red)
+        
+        # Save the new values 
+        if dialog.result: # User edits and clicks save
+            new_match, new_blue, new_red = dialog.result
+            self.matches[row_index] = (new_match, new_blue, new_red) # Updating the match list with new values
+            self.match_table.item(selected[0], values = (new_match, new_blue, new_red))
+
 
     def remove_match(self):
         """Remove selected match from list."""
