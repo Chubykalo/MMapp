@@ -121,6 +121,9 @@ class ScorecardGUI:
         # Sort Matches button
         tk.Button(button_frame, text='Sort Matches', command=self.sort_matches).pack(side='left', padx=5)
 
+        # Generate PDF button
+        tk.Button(button_frame, text='Generate Scorecard PDF', command=self.generate_pdf).pack(side='right', padx=5)
+
 
 
     def browse_fightcard(self):
