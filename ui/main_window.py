@@ -101,15 +101,19 @@ class ScorecardGUI:
         self.match_table.column('blue', width=200)
         self.match_table.column('red', width=200)
 
-        self.match_table.pack(fill='both', expand=True)
+        # Create scrollbar and link it to the treeview
+        scrollbar = ttk.Scrollbar(middle_frame, orient='vertical', command=self.match_table.yview)
+        self.match_table.configure(yscrollcommand=scrollbar.set)
 
+        self.match_table.pack(side='left', fill='both', expand=True)
+        scrollbar.pack(side='right', fill='y')
 
         ##### Button frame section #####
 
 
         # Button frame below table
         
-        button_frame = tk.Frame(middle_frame)
+        button_frame = tk.Frame(self.root)
         button_frame.pack(fill='x', pady=5)
 
         # Edit Selected Match button
