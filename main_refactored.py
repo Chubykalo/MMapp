@@ -14,22 +14,38 @@ def load_config(path=CONFIG_PATH):
     return config
 
 
-def main():
+def main(matches_data=None, output_path=None):
     cfg = load_config()
-    
+
     # Ensure dirs exist
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(TMP_DIR, exist_ok=True)
-
-    # Load matches directly from CSV
-    matches = load_matches_from_csv(path=cfg["FIGHTCARD_CSV_PATH"], delimiter=",", has_header=True)
     
+    # Determine matches
+    if matches_data is not None:
+        matches = matches_data
+    
+    else:
+        # Load matches directly from CSV
+        matches = load_matches_from_csv(path=cfg["FIGHTCARD_CSV_PATH"], delimiter=",", has_header=True)
+
+    # Determine output directory
+    if output_path is not None:
+        final_output = output_path
+        output_directory = os.path.dirname(output_path)
+
+    else:
+        final_output = os.path.join(OUT_DIR, cfg["MERGED_OUTPUT_FILENAME"])
+        output_directory = OUT_DIR
+
+    # Read template
     template_reader, page_width, page_height = read_template(cfg["TEMPLATE_PATH"])
 
+    # Main program logic
     for i, (match, blue, red) in enumerate(matches, start=1):
         texts = [match, blue, red]
         overlay = os.path.join(TMP_DIR, f"overlay_{i}.pdf")
-        out = os.path.join(OUT_DIR, f"scorecard_{i:02d}.pdf")
+        out = os.path.join(output_directory, f"scorecard_{i:02d}.pdf")
 
         make_overlay(page_width, page_height, overlay, texts,
                      font_match=cfg["FONT_MATCH"], size_match=cfg["FONT_SIZE_MATCH"],
@@ -40,14 +56,12 @@ def main():
     cleanup(TMP_DIR)
 
     # Merge all scorecards into one file
-    merged_output_path = os.path.join(OUT_DIR, cfg["MERGED_OUTPUT_FILENAME"])
-    pattern = os.path.join(OUT_DIR, "scorecard_*.pdf")
-
-    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=cfg["KEEP_SINGLE_SCORECARDS"])
-
-    print(f"Merged scorecards written to: {merged_output_path}")
     
-    pass
+    pattern = os.path.join(output_directory, "scorecard_*.pdf")
+    merge_pdfs_in_folder(pattern, final_output, keep_inputs=cfg["KEEP_SINGLE_SCORECARDS"])
+
+    print(f"Merged scorecards written to: {output_directory}")
+    
 
 if __name__ == "__main__":
     main()

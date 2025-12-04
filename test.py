@@ -1,5 +1,4 @@
 import os
-
-print(os.getcwd())
-
-print(os.path.join(os.getcwd(), "output"))
+path = "C:/Desktop/my_event.pdf"
+directory = os.path.dirname(path)
+print(directory)  # What does this print?
