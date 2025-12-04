@@ -1,52 +1,52 @@
-# main.py
-"""
-Main program for generating scorecards.
-"""
-
 import os
-from functions import *
 import json
-from pathlib import Path
-
+from core.data_handling import load_matches_from_csv, read_template
+from core.pdf_generation import make_overlay, apply_overlay, merge_pdfs_in_folder, cleanup
 
 CONFIG_PATH = "config.json"
 OUT_DIR = "output"
 TMP_DIR = "tmp_overlays"
 
-
-
-def load_config(path: Path = CONFIG_PATH) -> dict:
+def load_config(path=CONFIG_PATH):
     """Load config.json"""
-
     with open(path, "r", encoding="utf-8") as f:
         config = json.load(f)
-
     return config
 
-def main(fightcard_override=None, merged_output_override=None):
 
+def main(matches_data=None, output_path=None):
     cfg = load_config()
 
-    # Apply runtime overrides
-    if fightcard_override is not None:
-        cfg["FIGHTCARD_CSV_PATH"] = fightcard_override
+    # Determine matches
+    if matches_data is not None:
+        matches = matches_data
+    
+    else:
+        # Load matches directly from CSV
+        matches = load_matches_from_csv(path=cfg["FIGHTCARD_CSV_PATH"], delimiter=",", has_header=True)
 
-    if merged_output_override is not None:
-        cfg["MERGED_OUTPUT_FILENAME"] = merged_output_override
+    # Determine output directory
+    if output_path is not None:
+        final_output = output_path
+        output_directory = os.path.dirname(output_path)
+
+    else:
+        final_output = os.path.join(OUT_DIR, cfg["MERGED_OUTPUT_FILENAME"])
+        output_directory = OUT_DIR
 
     # Ensure dirs exist
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(TMP_DIR, exist_ok=True)
+    os.makedirs(output_directory, exist_ok=True)
 
-    # Load matches directly from CSV
-    matches = load_matches_from_csv(path=cfg["FIGHTCARD_CSV_PATH"], delimiter=",", has_header=True)
-    
+    # Read template
     template_reader, page_width, page_height = read_template(cfg["TEMPLATE_PATH"])
 
+    # Main program logic
     for i, (match, blue, red) in enumerate(matches, start=1):
         texts = [match, blue, red]
         overlay = os.path.join(TMP_DIR, f"overlay_{i}.pdf")
-        out = os.path.join(OUT_DIR, f"scorecard_{i:02d}.pdf")
+        out = os.path.join(output_directory, f"scorecard_{i:02d}.pdf")
 
         make_overlay(page_width, page_height, overlay, texts,
                      font_match=cfg["FONT_MATCH"], size_match=cfg["FONT_SIZE_MATCH"],
@@ -57,12 +57,12 @@ def main(fightcard_override=None, merged_output_override=None):
     cleanup(TMP_DIR)
 
     # Merge all scorecards into one file
-    merged_output_path = os.path.join(OUT_DIR, cfg["MERGED_OUTPUT_FILENAME"])
-    pattern = os.path.join(OUT_DIR, "scorecard_*.pdf")
+    
+    pattern = os.path.join(output_directory, "scorecard_*.pdf")
+    merge_pdfs_in_folder(pattern, final_output, keep_inputs=cfg["KEEP_SINGLE_SCORECARDS"])
 
-    merge_pdfs_in_folder(pattern, merged_output_path, keep_inputs=cfg["KEEP_SINGLE_SCORECARDS"])
-
-    print(f"Merged scorecards written to: {merged_output_path}")
+    print(f"Merged scorecards written to: {output_directory}")
+    
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from core.data_handling import load_matches_from_csv
 from .dialogs import EditMatchDialog
+from main import main
 
 
 class ScorecardGUI:
@@ -284,6 +285,45 @@ class ScorecardGUI:
         # Populate table with match data
         for match_num, blue, red in self.matches:
             self.match_table.insert('', 'end', values=(match_num, blue, red))
+
+    def generate_pdf(self):
+        """Generate PDF scorecards """
+        # Validate that there are matches
+        if not self.matches:
+            messagebox.showwarning("No Matches", "Please load or add matches before generating PDF.")
+            return
+        
+        # Determine default filename from event name field
+        event_name = self.event_entry.get()
+        if event_name and event_name != "":
+            # Convert spaces to underscores, remove special characters
+            safe_name = event_name.replace(" ", "_")
+            default_filename = f"{safe_name}_scorecards.pdf"
+        
+        else:
+            default_filename = "all_scorecards.pdf"
+            
+        # Show Save As dialog
+        save_path = filedialog.asksaveasfilename(
+            initialdir=os.getcwd(),
+            initialfile=default_filename,
+            defaultextension=".pdf",
+            filetypes=[("PDF files", "*.pdf")],
+            title="Save PDF file"
+            )
+
+        # Used cancelled -> stop function
+        if not save_path:
+            return
+
+        # Generate the PDF
+        main(matches_data=self.matches, output_path=save_path)
+
+        # Such success message if the file exists
+        if os.path.isfile(save_path):
+            messagebox.showinfo("Success", f"PDF successfully saved:\n{save_path}")
+        else:
+            messagebox.showwarning("Save Failed", "The PDF could not be found after saving")
 
     def run(self):
         self.root.mainloop()
