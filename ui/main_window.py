@@ -117,6 +117,9 @@ class ScorecardGUI:
         # Remove Selected Match button
         tk.Button(button_frame, text='Remove Selected Match', command=self.remove_match).pack(side='left', padx=5)
 
+        # Sort Matches button
+        tk.Button(button_frame, text='Sort Matches', command=self.sort_matches).pack(side='left', padx=5)
+
 
 
     def browse_fightcard(self):
@@ -260,6 +263,27 @@ class ScorecardGUI:
             widget.insert(0, placeholder)
             widget.config(fg='gray')
 
+    def sort_key(self, match):
+        """Helper function to determine sort order"""
+        match_num = match[0]
+        if match_num.isdigit():
+            return int(match_num)
+        else:
+            return 9999999
+    
+    def sort_matches(self):
+        """Sort matches by match number and update display"""
+        # Sort self.matches
+        self.matches.sort(key=self.sort_key)
+        # Update the table display
+
+        # Clear existing table
+        for item in self.match_table.get_children():
+            self.match_table.delete(item)
+
+        # Populate table with match data
+        for match_num, blue, red in self.matches:
+            self.match_table.insert('', 'end', values=(match_num, blue, red))
 
     def run(self):
         self.root.mainloop()

@@ -16,7 +16,7 @@ class EditMatchDialog:
 
         # Create the dialog window
         self.dialog = tk.Toplevel(parent)
-        self.dialog.title("Edit MAtch")
+        self.dialog.title("Edit Match")
         self.dialog.geometry("600x120")
 
         # Create input frame
