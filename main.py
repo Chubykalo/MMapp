@@ -1,21 +1,19 @@
 import os
+import sys
 import json
 from core.data_handling import load_matches_from_csv, read_template
 from core.pdf_generation import make_overlay, apply_overlay, merge_pdfs_in_folder, cleanup
+from core.utils import resource_path, load_config
 
-CONFIG_PATH = "config.json"
 OUT_DIR = "output"
 TMP_DIR = "tmp_overlays"
-
-def load_config(path=CONFIG_PATH):
-    """Load config.json"""
-    with open(path, "r", encoding="utf-8") as f:
-        config = json.load(f)
-    return config
+CONFIG_PATH = resource_path("config.json")
 
 
 def main(matches_data=None, output_path=None):
-    cfg = load_config()
+    cfg = load_config(CONFIG_PATH)
+
+    template_path = resource_path(cfg["TEMPLATE_PATH"])
 
     # Determine matches
     if matches_data is not None:
@@ -40,7 +38,7 @@ def main(matches_data=None, output_path=None):
     os.makedirs(output_directory, exist_ok=True)
 
     # Read template
-    template_reader, page_width, page_height = read_template(cfg["TEMPLATE_PATH"])
+    template_reader, page_width, page_height = read_template(template_path)
 
     # Main program logic
     for i, (match, blue, red) in enumerate(matches, start=1):
@@ -52,7 +50,7 @@ def main(matches_data=None, output_path=None):
                      font_match=cfg["FONT_MATCH"], size_match=cfg["FONT_SIZE_MATCH"],
                      font_athlete=cfg["FONT_ATHLETE"], size_athlete=cfg["FONT_SIZE_ATHLETE"])
 
-        apply_overlay(cfg["TEMPLATE_PATH"], overlay_path=overlay, output_path=out)
+        apply_overlay(template_path, overlay_path=overlay, output_path=out)
     
     cleanup(TMP_DIR)
 
