@@ -12,7 +12,7 @@ A Windows desktop application for generating PDF scorecards for MMA events.
 
 ## Download
 
-**[Download Latest Release (v1.0)](https://github.com/Chubykalo/MMapp/releases/latest)**
+**[Download Latest Release (v1.00)](https://github.com/Chubykalo/MMapp/releases/latest)**
 
 Extract the zip file and run `MMApp.exe` - it's that simple!
 
